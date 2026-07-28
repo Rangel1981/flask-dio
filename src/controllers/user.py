@@ -2,24 +2,36 @@ from flask import Blueprint, request
 from src.main import db, User
 from http import HTTPStatus
 from sqlalchemy import inspect
-
+from flask_jwt_extended import jwt_required
+from src.utils import requires_role
 
 bp = Blueprint("user", __name__, url_prefix="/users")
 
 
 def _create_user():
     data = request.json
-    user = User(username=data["username"])
+    user = User(
+                username=data["username"], 
+                password=data["password"],
+                role_id=data.get("role_id")
+            )
     db.session.add(user)
     db.session.commit()
    
 def _list_useres():
     query = db.select(User)
     users = db.session.execute(query).scalars()
-    return [{"id": user.id, "username": user.username} for user in users]
+    return [{"id": user.id, 
+             "username": user.username,
+             "role_id": 
+                {"id": user.role_id, 
+                 "name": user.role.name}
+            if user.role else None} for user in users]
 
 
 @bp.route("/", methods=["GET" , "POST"])
+@jwt_required()
+@requires_role("admin")
 def handler_users():
     if request.method == "POST":
         _create_user()

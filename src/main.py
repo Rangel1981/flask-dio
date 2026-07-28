@@ -3,33 +3,16 @@ import os
 import click
 
 from flask import Flask, current_app
+from flask_migrate import Migrate, migrate
 from flask_sqlalchemy import SQLAlchemy
+import jwt
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
-import sqlalchemy as sa
+from src.controllers.auth import db, jwt, Base, User, Post
 
-class Base(DeclarativeBase):
-  pass
+migrate = Migrate()
 
-db = SQLAlchemy(model_class=Base)
 
-class User(db.Model):
-    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(sa.String(80), unique=True)
 
-    def __repr__(self) -> str:
-        return f'User(id={self.id!r}, username={self.username!r})'
-
-class Post(db.Model):
-    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True)
-    created: Mapped[datetime] = mapped_column(sa.DateTime, server_default=sa.func.now())
-    title: Mapped[str] = mapped_column(sa.String(100), nullable=False)
-    body: Mapped[str] = mapped_column(sa.String, nullable=False)
-    author_id: Mapped[int] = mapped_column(sa.Integer, sa.ForeignKey('user.id'), nullable=False)
-
-    def __repr__(self) -> str:
-        return f'Post(id={self.id!r}, title={self.title!r}, author_id={self.author_id!r})'
 
 @click.command('init-db')
 def init_db_command():
@@ -46,7 +29,8 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        SQLALCHEMY_DATABASE_URI= 'sqlite:///db.sqlite'
+        SQLALCHEMY_DATABASE_URI= 'sqlite:///db.sqlite',
+        JWT_SECRET_KEY='super-secret'
         )
     
 
@@ -58,12 +42,17 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
 
    
-       
+   
     app.cli.add_command(init_db_command)
     db.init_app(app)
-    
+    migrate.init_app(app, db)
+    jwt.init_app(app)
+
     #resgister blueprints
-    from src.controllers import user
+    from src.controllers import user, post, auth, role
     app.register_blueprint(user.bp)
+    app.register_blueprint(post.bp)
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(role.bp)
 
     return app
