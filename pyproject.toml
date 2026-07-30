@@ -1,0 +1,7 @@
+[tool.pytest.init_options]
+
+addopts = ["-ra -vvv"]
+testpaths = [
+    "tests"
+    ]
+    
