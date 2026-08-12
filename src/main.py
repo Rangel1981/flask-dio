@@ -1,13 +1,9 @@
 from datetime import datetime
-import os
 import click
-
 from flask import Flask, current_app
 from flask_migrate import Migrate, migrate
-from flask_sqlalchemy import SQLAlchemy
 import jwt
-from sqlalchemy.orm import DeclarativeBase
-from src.controllers.auth import db, jwt, Base, User, Post
+from src.controllers.auth import db, jwt
 
 migrate = Migrate()
 

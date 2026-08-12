@@ -22,7 +22,7 @@ def login():
     if not user or password != user.password:
         return {"msg": "Bad username or password"}, HTTPStatus.UNAUTHORIZED
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
     return {"access_token": access_token}, HTTPStatus.OK
 
 

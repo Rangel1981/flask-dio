@@ -1,7 +1,6 @@
-[tool.pytest.init_options]
-
-addopts = ["-ra -vvv"]
+[tool.pytest.ini_options]
+minversion = "6.0"
 testpaths = [
-    "tests"
-    ]
-    
+    "tests",
+]
+pythonpath = "."

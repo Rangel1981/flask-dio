@@ -8,8 +8,9 @@ def requires_role(role_name):
     def decorator(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
-            user.id = get_jwt_identity()
-            user = db.session.execute(db.select(User).where(User.username == user.id)).scalar()
+            user_id = get_jwt_identity()
+            user = db.get_or_404(User, user_id)
+            
             if user.role.name != role_name:
                 return {"message": "User dont have permission"}, HTTPStatus.FORBIDDEN
 

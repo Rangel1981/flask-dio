@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from src.main import db, User
+from src.controllers.auth import db, User
 from http import HTTPStatus
 from sqlalchemy import inspect
 from flask_jwt_extended import jwt_required
