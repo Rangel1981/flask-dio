@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from flask_jwt_extended import get_jwt_identity
 from src.main import db
-from src.controllers.auth import User
+from src.models.user import User
 from functools import wraps
 
 def requires_role(role_name):

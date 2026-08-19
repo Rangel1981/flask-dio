@@ -1,6 +1,6 @@
 from datetime import datetime
-import click
-from flask import Flask, current_app
+
+from flask import Flask
 from flask_migrate import Migrate, migrate
 import jwt
 from src.controllers.auth import db, jwt
@@ -9,15 +9,6 @@ migrate = Migrate()
 
 
 
-
-@click.command('init-db')
-def init_db_command():
-    """Clear the existing data and create new tables."""
-    global db
-    with current_app.app_context():
-        db.create_all()
-
-    click.echo('Initialized the database.')
 
 
 def create_app(test_config=None):
@@ -39,7 +30,7 @@ def create_app(test_config=None):
 
    
    
-    app.cli.add_command(init_db_command)
+
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)

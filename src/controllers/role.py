@@ -1,7 +1,7 @@
 from flask import Blueprint, request
-from src.main import db
+from src.models import Role, db
 from http import HTTPStatus
-from src.controllers.auth import Role
+
 
 bp = Blueprint("role", __name__, url_prefix="/roles")
 

@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from src.controllers.auth import db, Post
+from src.models import Post, db
 from http import HTTPStatus
 from sqlalchemy import inspect
  
